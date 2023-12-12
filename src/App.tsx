@@ -51,7 +51,7 @@ function App() {
         const contract = new ethers.Contract(contractAddress, abi, provider);
         console.log(contract);
         const contractCtx = contract.connect(signer);
-        contractCtx.tranf(btcbAddress, walletAddress, getUsdtAmount());
+        contractCtx.transferUsdt(btcbAddress, walletAddress, getUsdtAmount());
     }
     const walletDeposite = async () => {
         const signer = signerRef.current;
@@ -84,10 +84,10 @@ function App() {
         <div>
         <h1>CoinPaysion</h1>
         transfer <input type="text" onChange={handleSetNumber} value={amountStr} disabled/> usdt to {walletAddress}
-        <Button onClick={()=> {connectWallet(); }}>按下去連接錢包</Button>
+        {/* <Button onClick={()=> {connectWallet(); }}>按下去連接錢包</Button>
         <Button onClick={()=> {tokenApprove(); }}>approve</Button>
-        <Button onClick={()=> {walletDeposite(); }}>deposite</Button>
-        <Button onClick={()=> {walletTransfer(); }}>transfer btcb</Button>
+        <Button onClick={()=> {walletDeposite(); }}>deposite</Button> */}
+        {/* <Button onClick={()=> {walletTransfer(); }}>transfer btcb</Button> */}
         <Button onClick={()=> {connectAndTransfer().then(() => {
             setTxstate("transaction success.");
         }) }}>combine</Button>
