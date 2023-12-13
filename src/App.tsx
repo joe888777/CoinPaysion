@@ -2,11 +2,15 @@ import { useState , ChangeEvent, useEffect, useRef } from 'react'
 
 import { ethers } from 'ethers';
 import { Button } from 'react-bootstrap';
-import {abi, address as contractAddress } from './transferUsdtContract';
 import { tokenAbi, address as tokenAddress } from './usdtToken';
-import { routerAbi, address as routerAddress } from './pancakeRouter';
-import { walletAddress, btcbAddress } from './config';
+import { walletAddress } from './config';
 import logo from './assets/logo.png';
+
+declare global {
+  interface Window {
+    ethereum?: any;
+  }
+}
 
 
 function App() {
@@ -25,7 +29,7 @@ function App() {
                 console.log(providerRef.current);
                 await providerRef.current.send("eth_requestAccounts", []);
                 signerRef.current = providerRef.current.getSigner();
-            } catch (err: Error) {
+            } catch (err: any) {
                 setError(err.message);
             }
         } else {
@@ -35,14 +39,7 @@ function App() {
     const getUsdtAmount = () => {
         return ethers.utils.parseUnits(amountStr, 18);
     }
-    const tokenApprove = async () => {
-        const signer = signerRef.current;
-        const provider = providerRef.current;
-        const tokenContract = new ethers.Contract(tokenAddress, tokenAbi, provider);
-        console.log(tokenContract);
-        const contractCtx = tokenContract.connect(signer);
-        await contractCtx.approve(contractAddress, getUsdtAmount());
-    }
+
     const tokentransfer = async () => {
         const signer = signerRef.current;
         const provider = providerRef.current;
@@ -50,29 +47,6 @@ function App() {
         console.log(tokenContract);
         const contractCtx = tokenContract.connect(signer);
         await contractCtx.transfer(walletAddress, getUsdtAmount());
-    }
-
-    const walletTransfer = async () => {
-        let overrides: any = {
-            gasLimit: 3000000
-          };
-        const signer = signerRef.current;
-        const provider = providerRef.current;
-        const contract = new ethers.Contract(contractAddress, abi, provider);
-        console.log(contract);
-        const contractCtx = contract.connect(signer);
-        await contractCtx.transferUsdt(btcbAddress, walletAddress, getUsdtAmount(),overrides);
-    }
-    const walletDeposite = async () => {
-        let overrides: any = {
-            gasLimit: 3000000
-          };
-        const signer = signerRef.current;
-        const provider = providerRef.current;
-        const contract = new ethers.Contract(contractAddress, abi, provider);
-        console.log(contract);
-        const contractCtx = contract.connect(signer);
-        await contractCtx.deposite(btcbAddress, getUsdtAmount(), overrides);
     }
 
     const connectAndTransfer = async () => {
