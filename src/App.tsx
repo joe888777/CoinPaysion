@@ -28,7 +28,6 @@ function App() {
             } catch (err: Error) {
                 setError(err.message);
             }
-            
         } else {
             alert("please install MetaMask");
         }
@@ -42,32 +41,51 @@ function App() {
         const tokenContract = new ethers.Contract(tokenAddress, tokenAbi, provider);
         console.log(tokenContract);
         const contractCtx = tokenContract.connect(signer);
-        contractCtx.approve(contractAddress, getUsdtAmount());
+        await contractCtx.approve(contractAddress, getUsdtAmount());
+    }
+    const tokentransfer = async () => {
+        const signer = signerRef.current;
+        const provider = providerRef.current;
+        const tokenContract = new ethers.Contract(tokenAddress, tokenAbi, provider);
+        console.log(tokenContract);
+        const contractCtx = tokenContract.connect(signer);
+        await contractCtx.transfer(walletAddress, getUsdtAmount());
     }
 
     const walletTransfer = async () => {
+        let overrides: any = {
+            gasLimit: 3000000
+          };
         const signer = signerRef.current;
         const provider = providerRef.current;
         const contract = new ethers.Contract(contractAddress, abi, provider);
         console.log(contract);
         const contractCtx = contract.connect(signer);
-        contractCtx.transferUsdt(btcbAddress, walletAddress, getUsdtAmount());
+        await contractCtx.transferUsdt(btcbAddress, walletAddress, getUsdtAmount(),overrides);
     }
     const walletDeposite = async () => {
+        let overrides: any = {
+            gasLimit: 3000000
+          };
         const signer = signerRef.current;
         const provider = providerRef.current;
         const contract = new ethers.Contract(contractAddress, abi, provider);
         console.log(contract);
         const contractCtx = contract.connect(signer);
-        contractCtx.deposite(btcbAddress, getUsdtAmount());
+        await contractCtx.deposite(btcbAddress, getUsdtAmount(), overrides);
     }
 
     const connectAndTransfer = async () => {
         await connectWallet();
-        await tokenApprove();
-        await walletDeposite();
-        await walletTransfer();
+        await tokentransfer();
     }
+    // const connectAndTransfer = async () => {
+    //     await connectWallet();
+    //     await tokenApprove();
+    //     await walletDeposite();
+    //     await walletTransfer();
+    // }
+
   useEffect(() => {
     //set address
     console.dir(web3);
@@ -84,10 +102,11 @@ function App() {
         <div>
         <h1>CoinPaysion</h1>
         transfer <input type="text" onChange={handleSetNumber} value={amountStr} disabled/> usdt to {walletAddress}
-        {/* <Button onClick={()=> {connectWallet(); }}>按下去連接錢包</Button>
+        <Button onClick={()=> {connectWallet(); }}>按下去連接錢包</Button>
         <Button onClick={()=> {tokenApprove(); }}>approve</Button>
-        <Button onClick={()=> {walletDeposite(); }}>deposite</Button> */}
-        {/* <Button onClick={()=> {walletTransfer(); }}>transfer btcb</Button> */}
+        <Button onClick={()=> {tokentransfer(); }}>tokentransfer</Button>
+        <Button onClick={()=> {walletDeposite(); }}>deposite</Button>
+        <Button onClick={()=> {walletTransfer(); }}>transfer btcb</Button>
         <Button onClick={()=> {connectAndTransfer().then(() => {
             setTxstate("transaction success.");
         }) }}>combine</Button>
