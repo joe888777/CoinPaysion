@@ -6,7 +6,7 @@ import {abi, address as contractAddress } from './transferUsdtContract';
 import { tokenAbi, address as tokenAddress } from './usdtToken';
 import { routerAbi, address as routerAddress } from './pancakeRouter';
 import { walletAddress, btcbAddress } from './config';
-import './App.css'
+import logo from './assets/logo.png';
 
 
 function App() {
@@ -33,7 +33,7 @@ function App() {
         }
     }
     const getUsdtAmount = () => {
-        return BigInt(parseFloat(amountStr)*1000000000000000000);
+        return ethers.utils.parseUnits(amountStr, 18);
     }
     const tokenApprove = async () => {
         const signer = signerRef.current;
@@ -99,19 +99,35 @@ function App() {
 
   return (
     <>
-        <div>
-        <h1>CoinPaysion</h1>
+        <div style={
+            {
+                "display": "flex",
+                "flexDirection": "column",
+                "alignItems": "center",
+                background: "#ffffff",
+                width: "100%",
+                height: "100%",
+                maxWidth: "746px",
+                margin: "20px auto"
+            }
+        }>
+        <h1><img src={logo} alt="" /></h1>
+        <div className="d-flex">
+
         transfer <input type="text" onChange={handleSetNumber} value={amountStr} disabled/> usdt to {walletAddress}
-        <Button onClick={()=> {connectWallet(); }}>按下去連接錢包</Button>
+        {/* <Button onClick={()=> {connectWallet(); }}>按下去連接錢包</Button>
         <Button onClick={()=> {tokenApprove(); }}>approve</Button>
         <Button onClick={()=> {tokentransfer(); }}>tokentransfer</Button>
         <Button onClick={()=> {walletDeposite(); }}>deposite</Button>
-        <Button onClick={()=> {walletTransfer(); }}>transfer btcb</Button>
-        <Button onClick={()=> {connectAndTransfer().then(() => {
-            setTxstate("transaction success.");
-        }) }}>combine</Button>
+    <Button onClick={()=> {walletTransfer(); }}>transfer btcb</Button> */}
+        <Button style={{margin: "10px", padding: "5px" }} onClick={()=> {connectAndTransfer().then(() => {
+            setTimeout(() => {
+                setTxstate("transaction success.");
+            }, 5000)//workaround
+        }) }}>pay</Button>
+        </div>
       <div>
-        <span color="green">
+        <span style={{color: "green"}}>
             {txstate}
         </span>
         <span color="red">
